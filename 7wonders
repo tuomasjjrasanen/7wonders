@@ -22,6 +22,18 @@ import sys
 from matplotlib import pyplot
 import numpy
 
+PARAM_NAMES = (
+    'military',
+    'gold',
+    'wonder',
+    'civic',
+    'commercial',
+    'guild',
+    'scientific',
+    'total',
+    'rank',
+)
+
 CSV_FIELDS_PARTIAL_SCORES = {
     'military'   : int,
     'gold'       : int,
@@ -76,11 +88,14 @@ def main():
         for game_score in game_scores:
             params.setdefault('rank', []).append(game_score / max_game_score)
 
-    param_names, param_values = zip(*params.items())
+    param_values = []
+    for param_name in PARAM_NAMES:
+        param_values.append(params[param_name])
+
     pyplot.pcolor(numpy.corrcoef(param_values))
     pyplot.colorbar().set_clim((-1.0, 1.0))
-    pyplot.yticks(numpy.arange(0.5,len(params)), param_names)
-    pyplot.xticks(numpy.arange(0.5,len(params)), param_names, rotation=90)
+    pyplot.yticks(numpy.arange(0.5,len(params)), PARAM_NAMES)
+    pyplot.xticks(numpy.arange(0.5,len(params)), PARAM_NAMES, rotation=90)
     pyplot.set_cmap('RdBu_r')
     pyplot.show()
 
