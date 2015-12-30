@@ -54,8 +54,8 @@ CSV_FIELDS = {
 }
 CSV_FIELDS.update(CSV_FIELDS_SCORES)
 
-def main():
-    csv_reader = csv.DictReader(sys.stdin)
+def main(csv_file):
+    csv_reader = csv.DictReader(csv_file)
 
     params = {}
 
@@ -100,4 +100,11 @@ def main():
     pyplot.show()
 
 if __name__ == '__main__':
-    main()
+    if len(sys.argv) != 2:
+        print("error: invalid number of arguments (%d), expected 1"
+              % (len(sys.argv) - 1), file=sys.stderr)
+        print("usage: %s CSV_FILE" % sys.argv[0], file=sys.stderr)
+        sys.exit(1)
+
+    with open(sys.argv[1]) as csv_file:
+        main(csv_file)
