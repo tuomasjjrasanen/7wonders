@@ -76,10 +76,11 @@ def main():
         for game_score in game_scores:
             params.setdefault('rank', []).append(game_score / max_game_score)
 
-    pyplot.pcolor(numpy.corrcoef(tuple(params.values())))
+    param_names, param_values = zip(*params.items())
+    pyplot.pcolor(numpy.corrcoef(param_values))
     pyplot.colorbar().set_clim((-1.0, 1.0))
-    pyplot.yticks(numpy.arange(0.5,len(params)),range(0,len(params)))
-    pyplot.xticks(numpy.arange(0.5,len(params)),range(0,len(params)))
+    pyplot.yticks(numpy.arange(0.5,len(params)), param_names)
+    pyplot.xticks(numpy.arange(0.5,len(params)), param_names, rotation=90)
     pyplot.set_cmap('RdBu_r')
     pyplot.show()
 
