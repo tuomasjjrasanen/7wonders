@@ -1,0 +1,85 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+# Copyright © 2015 Tuomas Räsänen <tuomasjjrasanen@tjjr.fi>
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+import collections
+import csv
+import sys
+
+from matplotlib import pyplot
+import numpy
+
+COLS = 9
+
+def main():
+    params = (
+        'military',
+        'gold',
+        'wonder',
+        'civic',
+        'commercial',
+        'guild',
+        'scientific',
+        'total',
+        'rank',
+    )
+    scores = (
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+    )
+
+    total_scores = collections.OrderedDict()
+
+    csv_reader = csv.reader(sys.stdin)
+    for i, row in enumerate(csv_reader, 1):
+        if len(row) != COLS:
+            print('error: line %d: expected %d columns, but got %d'
+                  % (i, COLS, len(row)), file=sys.stderr)
+            sys.exit(1)
+
+        values = [int(v) for v in row[1:]]
+        total_score = sum(values[:-1])
+        if values[-1] != total_score:
+            print('warning: line %d: wrong total score, expected %d'
+                  % (i, total_score), file=sys.stderr)
+        values[-1] = total_score
+
+        for value, score_array in zip(values, scores):
+            score_array.append(value)
+
+        total_scores.setdefault(int(row[0]), []).append(total_score)
+
+    for gameid, game_scores in total_scores.items():
+        max_game_score = max(game_scores)
+        for game_score in game_scores:
+            scores[-1].append(game_score / max_game_score)
+
+    pyplot.pcolor(numpy.corrcoef(scores))
+    pyplot.colorbar()
+    pyplot.yticks(numpy.arange(0.5,len(params)),range(0,len(params)))
+    pyplot.xticks(numpy.arange(0.5,len(params)),range(0,len(params)))
+    pyplot.set_cmap('gnuplot2')
+    pyplot.show()
+
+if __name__ == '__main__':
+    main()
