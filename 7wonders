@@ -22,59 +22,61 @@ import sys
 from matplotlib import pyplot
 import numpy
 
-COLS = 9
+CSV_FIELDS_PARTIAL_SCORES = {
+    'military'   : int,
+    'gold'       : int,
+    'wonder'     : int,
+    'civic'      : int,
+    'commercial' : int,
+    'guild'      : int,
+    'scientific' : int,
+}
+
+CSV_FIELDS_SCORES = {
+    'total'      : int,
+}
+CSV_FIELDS_SCORES.update(CSV_FIELDS_PARTIAL_SCORES)
+
+CSV_FIELDS = {
+    'gameid' : lambda x: x,
+}
+CSV_FIELDS.update(CSV_FIELDS_SCORES)
 
 def main():
-    params = (
-        'military',
-        'gold',
-        'wonder',
-        'civic',
-        'commercial',
-        'guild',
-        'scientific',
-        'total',
-        'rank',
-    )
-    scores = (
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-    )
+    csv_reader = csv.DictReader(sys.stdin)
+
+    params = {}
 
     total_scores = collections.OrderedDict()
 
-    csv_reader = csv.reader(sys.stdin)
-    for i, row in enumerate(csv_reader, 1):
-        if len(row) != COLS:
+    for row in csv_reader:
+        if len(row) != len(csv_reader.fieldnames):
             print('error: line %d: expected %d columns, but got %d'
-                  % (i, COLS, len(row)), file=sys.stderr)
+                  % (csv_reader.line_num, len(csv_reader.fieldnames), len(row)),
+                  file=sys.stderr)
             sys.exit(1)
 
-        values = [int(v) for v in row[1:]]
-        total_score = sum(values[:-1])
-        if values[-1] != total_score:
-            print('warning: line %d: wrong total score, expected %d'
-                  % (i, total_score), file=sys.stderr)
-        values[-1] = total_score
+        for field_name, field_type in CSV_FIELDS.items():
+            row[field_name] = field_type(row[field_name])
 
-        for value, score_array in zip(values, scores):
-            score_array.append(value)
+        total_score = sum([row[f] for f in CSV_FIELDS_PARTIAL_SCORES])
+        if row['total'] != total_score:
+            print('warning: line %d: wrong total score %d, expected %d'
+                  % (csv_reader.line_num, row['total'], total_score),
+                  file=sys.stderr)
+        row['total'] = total_score
 
-        total_scores.setdefault(int(row[0]), []).append(total_score)
+        for field_name in CSV_FIELDS_SCORES:
+            params.setdefault(field_name, []).append(row[field_name])
+
+        total_scores.setdefault(row['gameid'], []).append(total_score)
 
     for gameid, game_scores in total_scores.items():
         max_game_score = max(game_scores)
         for game_score in game_scores:
-            scores[-1].append(game_score / max_game_score)
+            params.setdefault('rank', []).append(game_score / max_game_score)
 
-    pyplot.pcolor(numpy.corrcoef(scores))
+    pyplot.pcolor(numpy.corrcoef(tuple(params.values())))
     pyplot.colorbar()
     pyplot.yticks(numpy.arange(0.5,len(params)),range(0,len(params)))
     pyplot.xticks(numpy.arange(0.5,len(params)),range(0,len(params)))
