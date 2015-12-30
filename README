@@ -4,3 +4,15 @@
 
 Author: Tuomas Räsänen <tuomasjjrasanen@tjjr.fi>
 License: GPLv3+
+
+Requirements
+============
+
+- Python3
+- Matplotlib
+- Numpy
+
+Usage
+=====
+
+  ./7wonders example.csv
