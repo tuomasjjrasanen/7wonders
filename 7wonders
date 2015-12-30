@@ -80,7 +80,7 @@ def main():
     pyplot.colorbar()
     pyplot.yticks(numpy.arange(0.5,len(params)),range(0,len(params)))
     pyplot.xticks(numpy.arange(0.5,len(params)),range(0,len(params)))
-    pyplot.set_cmap('gnuplot2')
+    pyplot.set_cmap('RdBu_r')
     pyplot.show()
 
 if __name__ == '__main__':
