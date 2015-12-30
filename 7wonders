@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import collections
 import csv
 import sys
 
@@ -30,6 +31,7 @@ PARAM_NAMES = (
     'guild',
     'scientific',
     'total',
+    'rank',
 )
 
 CSV_FIELDS_PARTIAL_SCORES = {
@@ -57,6 +59,8 @@ def main():
 
     params = {}
 
+    total_scores = collections.OrderedDict()
+
     for row in csv_reader:
         if len(row) != len(csv_reader.fieldnames):
             print('error: line %d: expected %d columns, but got %d'
@@ -76,6 +80,13 @@ def main():
 
         for field_name in CSV_FIELDS_SCORES:
             params.setdefault(field_name, []).append(row[field_name])
+
+        total_scores.setdefault(row['gameid'], []).append(total_score)
+
+    for gameid, game_scores in total_scores.items():
+        max_game_score = max(game_scores)
+        for game_score in game_scores:
+            params.setdefault('rank', []).append(game_score / max_game_score)
 
     param_values = []
     for param_name in PARAM_NAMES:
