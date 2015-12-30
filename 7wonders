@@ -31,7 +31,7 @@ PARAM_NAMES = (
     'guild',
     'scientific',
     'total',
-    'rank',
+    'ranking',
 )
 
 CSV_FIELDS_PARTIAL_SCORES = {
@@ -86,7 +86,7 @@ def main():
     for gameid, game_scores in total_scores.items():
         max_game_score = max(game_scores)
         for game_score in game_scores:
-            params.setdefault('rank', []).append(game_score / max_game_score)
+            params.setdefault('ranking', []).append(game_score / max_game_score)
 
     param_values = []
     for param_name in PARAM_NAMES:
