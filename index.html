@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script>
+var ORIGIN_X    = 102;
+var ORIGIN_Y    = 539;
+var CELL_WIDTH  = 55;
+var CELL_HEIGHT = 53;
+var PARAMS      = ["military", "gold", "wonder", "civic", "commercial",
+                   "guild", "scientific", "total", "ranking"];
+var currentImage = "7wonders_corrcoef.png";
+
+function getImagePos(event, img) {
+    var x = event.offsetX ? event.offsetX : event.pageX - img.offsetLeft;
+    var y = event.offsetY ? event.offsetY : event.pageY - img.offsetTop;
+
+    return [x, y];
+}
+
+function getGridPos(imagePos) {
+    var x = imagePos[0] - ORIGIN_X;
+    var y = -imagePos[1] + ORIGIN_Y;
+
+    if (x < 0 || x > 9 * CELL_WIDTH) {
+        return null;
+    }
+
+    if (y < 0 || y > 9 * CELL_HEIGHT) {
+        return null;
+    }
+
+    return [x, y];
+}
+
+function getCellPos(gridPos) {
+    return [Math.floor(gridPos[0] / CELL_WIDTH),
+            Math.floor(gridPos[1] / CELL_HEIGHT)];
+}
+
+function getCellImageName(cellPos) {
+    var param1 = PARAMS[cellPos[0]];
+    var param2 = PARAMS[cellPos[1]];
+
+    return `7wonders_corrcoef_${param1}_${param2}.png`
+}
+
+function changeImage(event, img) {
+    var nextImage = "7wonders_corrcoef.png";
+    if (currentImage === "7wonders_corrcoef.png") {
+        var imagePos      = getImagePos(event, img);
+        var gridPos       = getGridPos(imagePos);
+        if (gridPos != null) {
+            var cellPos = getCellPos(gridPos);
+            nextImage   = getCellImageName(cellPos);
+        }
+    }
+    if (nextImage !== currentImage) {
+        document.getElementById("image").src = nextImage;
+        currentImage = nextImage;
+    }
+}
+</script>
+</head>
+<body>
+  <img id="image" style="cursor: pointer; cursor: hand;" src="7wonders_corrcoef.png" onClick="changeImage(event, this);">
+</body>
+</html>
