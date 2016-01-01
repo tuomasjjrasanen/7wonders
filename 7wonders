@@ -92,12 +92,14 @@ def main(csv_file):
     for param_name in PARAM_NAMES:
         param_values.append(params[param_name])
 
-    pyplot.pcolor(numpy.corrcoef(param_values))
+    r = numpy.corrcoef(param_values)
+
+    pyplot.pcolor(r)
     pyplot.colorbar().set_clim((-1.0, 1.0))
     pyplot.yticks(numpy.arange(0.5,len(params)), PARAM_NAMES)
     pyplot.xticks(numpy.arange(0.5,len(params)), PARAM_NAMES, rotation=90)
     pyplot.set_cmap('RdBu_r')
-    pyplot.show()
+    pyplot.savefig('7wonders_corrcoef.png')
 
 if __name__ == '__main__':
     if len(sys.argv) != 2:
