@@ -101,6 +101,18 @@ def main(csv_file):
     pyplot.set_cmap('RdBu_r')
     pyplot.savefig('7wonders_corrcoef.png')
 
+    for i in range(len(PARAM_NAMES)):
+        for j in range(len(PARAM_NAMES)):
+            pyplot.close()
+            pyplot.figure()
+            x = param_values[i]
+            y = param_values[j]
+            pyplot.scatter(x, y, s=20)
+            pyplot.xlabel(PARAM_NAMES[i])
+            pyplot.ylabel(PARAM_NAMES[j])
+            pyplot.savefig("7wonders_corrcoef_%s_%s.png" %
+                           (PARAM_NAMES[i], PARAM_NAMES[j]))
+
 if __name__ == '__main__':
     if len(sys.argv) != 2:
         print("error: invalid number of arguments (%d), expected 1"
