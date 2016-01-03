@@ -29,7 +29,7 @@ PARAM_NAMES = (
     'civic',
     'commercial',
     'guild',
-    'scientific',
+    'science',
     'total',
     'ranking',
 )
@@ -41,7 +41,7 @@ CSV_FIELDS_PARTIAL_SCORES = {
     'civic'      : int,
     'commercial' : int,
     'guild'      : int,
-    'scientific' : int,
+    'science'    : int,
 }
 
 CSV_FIELDS_SCORES = {
