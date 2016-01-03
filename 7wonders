@@ -86,7 +86,9 @@ def main(csv_file):
     for gameid, game_scores in total_scores.items():
         max_game_score = max(game_scores)
         for game_score in game_scores:
-            params.setdefault('ranking', []).append(game_score / max_game_score)
+            i = list(sorted(game_scores)).index(game_score)
+            ranking = i / (len(game_scores) - 1)
+            params.setdefault('ranking', []).append(ranking)
 
     param_values = []
     for param_name in PARAM_NAMES:
